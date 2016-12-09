@@ -390,4 +390,5 @@ function [feature,loc]=SIFT(img, f_num)
     index=find(sum(feature));
     feature=feature(:,index);
  
+>>>>>>> b21f60c8cf73095a47ff11c8f8c9c21b42a45374
 end
