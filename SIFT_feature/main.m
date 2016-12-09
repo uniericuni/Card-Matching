@@ -1,5 +1,9 @@
 close all;
 clear;
 clc;
+
+% feature: 128-dim SIFT feature
+% loc: coordinate corresponding to same indexed feature
+
 img=imread('../cp_data/cards/001.png');
-img=SIFT(img);
+[feature,loc]=SIFT(img);
