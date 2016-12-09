@@ -11,24 +11,29 @@ for i = 1:length(folders)
 end
 
 for i = 1:length(namelist)
-    im = imread(namelist{i});
-    imgray = rgb2gray(im);
-    diff = 15;
-    [x,y] = size(imgray);
-    bg1 = zeros(size(imgray));
-    bg2 = bg1;
-    bg1 = process_background(imgray, imgray(1,1), bg1, diff, 1, 1);
-    bg2 = process_background(imgray, imgray(x,y), bg2, diff, x, y);
-    bg = bg1 | bg2;
+    id = segmentation(imread(namelist{i}));
+    figure, imagesc(id);
+    figure, imshow(rgb2gray(imread(namelist{i})).*uint8(id>0));
+%     max(id(:))
     
-    x1 =60;
-    y1=275;
-    bg1 = process_background(imgray, imgray(x1,y1), bg, diff, x1, y1);
-    bg2 = process_background(imgray, imgray(200,50), bg, diff, 200, 50);
-    bg = bg1 | bg2;
-    bg = imgaussfilt(double(bg),1);
-%     figure, imagesc(double(1-bg).*double(imgray));
-    figure, imagesc(my_segment(uint8(double(1-bg).*double(imgray))==0));
+%     im = imread(namelist{i});
+%     imgray = rgb2gray(im);
+%     diff = 15;
+%     [x,y] = size(imgray);
+%     bg1 = zeros(size(imgray));
+%     bg2 = bg1;
+%     bg1 = process_background(imgray, imgray(1,1), bg1, diff, 1, 1);
+%     bg2 = process_background(imgray, imgray(x,y), bg2, diff, x, y);
+%     bg = bg1 | bg2;
+%     
+%     x1 =60;
+%     y1=275;
+%     bg1 = process_background(imgray, imgray(x1,y1), bg, diff, x1, y1);
+%     bg2 = process_background(imgray, imgray(200,50), bg, diff, 200, 50);
+%     bg = bg1 | bg2;
+%     bg = imgaussfilt(double(bg),1);
+% %     figure, imagesc(double(1-bg).*double(imgray));
+%     figure, imagesc(my_segment(uint8(double(1-bg).*double(imgray))==0));
 end
 
 
