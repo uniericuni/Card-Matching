@@ -30,7 +30,7 @@ adjacency = segNeighbors(segmentimage);
 % normalization for distance calculation based on the image size
 % for points (x1,y1) and (x2,y2), distance is
 % exp(-||(x1,y1)-(x2,y2)||^2/dnorm)
-dnorm = 2*prod(size(segmentimage)/2)^2;
+dnorm = 100*prod(size(segmentimage)/2)^2;
 % dnorm = 0.005*prod(size(segmentimage,1)/2)^2;
 
 k = length(segments);

@@ -13,7 +13,7 @@
 % im = double(imread('flag1.jpg'))/255;
 
 im = double(imread('../cp_data/cards/002.png'))/255;
-im = double(imread('../cp_data/images/002.png'))/255;
+% im = double(imread('../cp_data/images/002.png'))/255;
 
 
 %figure; imagesc(im);

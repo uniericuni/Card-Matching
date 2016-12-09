@@ -1,5 +1,5 @@
 close all
-imc = imread('../cp_data/cards/001.png');
+imc = imread('../cp_data/cards/002.png');
 imi = imread('../cp_data/images/002.png');
 folders = {'../cp_data/cards/', '../cp_data/images/'};
 name = {'001.png','002.png','003.png','004.png','005.png' };
@@ -13,7 +13,7 @@ end
 for i = 1:length(namelist)
     im = imread(namelist{i});
     imgray = rgb2gray(im);
-    diff = 10;
+    diff = 15;
     [x,y] = size(imgray);
     bg1 = zeros(size(imgray));
     bg2 = bg1;
@@ -21,11 +21,34 @@ for i = 1:length(namelist)
     bg2 = process_background(imgray, imgray(x,y), bg2, diff, x, y);
     bg = bg1 | bg2;
     
-    bg1 = process_background(imgray, imgray(50,200), bg, diff, 50, 200);
+    x1 =60;
+    y1=275;
+    bg1 = process_background(imgray, imgray(x1,y1), bg, diff, x1, y1);
     bg2 = process_background(imgray, imgray(200,50), bg, diff, 200, 50);
     bg = bg1 | bg2;
-    figure, imagesc(bg);
+    bg = imgaussfilt(double(bg),1);
+%     figure, imagesc(double(1-bg).*double(imgray));
+    figure, imagesc(my_segment(uint8(double(1-bg).*double(imgray))==0));
 end
+
+
+% im = imc;
+% imgray = rgb2gray(im);
+% diff = 15;
+% [x,y] = size(imgray);
+% bg1 = zeros(size(imgray));
+% bg2 = bg1;
+% bg1 = process_background(imgray, imgray(1,1), bg1, diff, 1, 1);
+% bg2 = process_background(imgray, imgray(x,y), bg2, diff, x, y);
+% bg = bg1 | bg2;
+% 
+% x1 =60;
+% y1=275;
+% bg1 = process_background(imgray, imgray(x1,y1), bg, diff, x1, y1);
+% bg2 = process_background(imgray, imgray(200,50), bg, diff, 200, 50);
+% bg = bg1 | bg2;
+% figure, imagesc(bg);
+
 
 % im = imc;
 % 
