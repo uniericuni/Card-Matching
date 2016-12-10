@@ -4,6 +4,7 @@ clc;
 
 directory = './cp_data/cards/';
 addpath('./segmentation');
+addpath('./siftDemoV4');
 for i=1:5
     for j=i+1:5
         

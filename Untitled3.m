@@ -1,1 +1,0 @@
-imwrite(im1,'gg.png');
