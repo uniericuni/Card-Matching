@@ -41,7 +41,9 @@ function [feature,loc]=SIFT(img, f_num, mask)
     %% Initiate image
     fprintf('Initiate image ...\n');
     img=rgb2gray(img);
-    img=img+uint8(~mask).*255;
+    if nargin>2
+        img=img+uint8(~mask).*255;
+    end
     img=im2double(img);
     [row,column]=size(img);
     origin=img;
@@ -410,5 +412,6 @@ function [feature,loc]=SIFT(img, f_num, mask)
     end
     index=find(sum(feature));
     feature=feature(:,index);
+    loc=loc./2;
  
 end
