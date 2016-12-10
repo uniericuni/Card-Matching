@@ -26,13 +26,12 @@ for i=1:5
         plot(mean(x1),mean(y1),'rx','MarkerSize', 40);
         hold on;
         plot(mean(x2)+width,mean(y2),'rx','MarkerSize', 40);
+        saveas(gcf, ['00',num2str(i),'_00',num2str(j),'_demo.png']);
         
         % Write File
-        %{
         out=zeros(height,width);
         out(uint8(mean(x1)),uint8(mean(y1)))=255;
-        imwrite(out, ['./card_results/00',num2str(i),'_00',num2str(j),'.png'])
-        %}
+        imwrite(out, ['00',num2str(i),'_00',num2str(j),'.png'])
         
     end
 end
