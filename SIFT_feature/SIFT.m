@@ -62,10 +62,10 @@ function [feature,loc]=SIFT(img, f_num)
     % first image in first octave is created by interpolating the original one.
     temp_img=kron(img,ones(2));
     temp_img=padarray(temp_img,[1,1],'replicate');
-    figure(2);
-    subplot(2,2,1);
-    imshow(origin);
-    title('original image');
+    % figure(2);
+    % subplot(2,2,1);
+    % imshow(origin);
+    % title('original image');
     
     %create the DoG pyramid.
     for i=1:octave
@@ -73,17 +73,17 @@ function [feature,loc]=SIFT(img, f_num)
         for j=1:level
             scale=sigma0*sqrt(2)^(1/level)^((i-1)*level+j);
             p=(level)*(i-1);
-            figure(1);
-            h = gcf;
-            mtit(h,'DoG Pyramid');
-            subplot(octave,level,p+j);
+            % figure(1);
+            % h = gcf;
+            % mtit(h,'DoG Pyramid');
+            % subplot(octave,level,p+j);
             f=fspecial('gaussian',[1,floor(6*scale)],scale);
             L1=temp_img;
             if(i==1&&j==1)
                 L2=conv2(temp_img,f,'same');
                 L2=conv2(L2,f','same');
                 temp_D(:,:,j)=L2-L1;
-                imshow(uint8(255 * mat2gray(temp_D(:,:,j))));
+                % imshow(uint8(255 * mat2gray(temp_D(:,:,j))));
                 L1=L2;
             else
                 L2=conv2(temp_img,f,'same');
@@ -93,7 +93,7 @@ function [feature,loc]=SIFT(img, f_num)
                 if(j==level)
                     temp_img=L1(2:end-1,2:end-1);
                 end
-                imshow(uint8(255 * mat2gray(temp_D(:,:,j))));
+                % imshow(uint8(255 * mat2gray(temp_D(:,:,j))));
             end
         end
         D{i}=temp_D;
@@ -145,12 +145,12 @@ function [feature,loc]=SIFT(img, f_num)
     y=mod((extrema(3:4:end)-1),m./(2.^(extrema(1:4:end)-2)))+1;
     ry=y./2.^(octave-1-extrema(1:4:end));
     rx=x./2.^(octave-1-extrema(1:4:end));
-    figure(2);
-    subplot(2,2,2);
-    imshow(origin);
-    hold on
-    plot(ry,rx,'r+');
-    title('labeled with local extrema');
+    % figure(2);
+    % subplot(2,2,2);
+    % imshow(origin);
+    % hold on
+    % plot(ry,rx,'r+');
+    % title('labeled with local extrema');
     
     %% Keypoint thresholding / Accurate Keypoint Localization
     % eliminate the point with low contrast or poorly localized on an edge
@@ -171,6 +171,8 @@ function [feature,loc]=SIFT(img, f_num)
             D{i}(:,:,j)=temp.*conv2(test',[-1,-1;1,1],'same')*0.5+test;
         end
     end
+    
+    % threshold on small contrast
     for i=1:extr_volume
         x=floor((extrema(4*(i-1)+3)-1)/(n/(2^(extrema(4*(i-1)+1)-2))))+1;
         y=mod((extrema(4*(i-1)+3)-1),m/(2^(extrema(4*(i-1)+1)-2)))+1;
@@ -190,12 +192,14 @@ function [feature,loc]=SIFT(img, f_num)
     y=mod((extrema(3:4:end)-1),m./(2.^(extrema(1:4:end)-2)))+1;
     ry=y./2.^(octave-1-extrema(1:4:end));
     rx=x./2.^(octave-1-extrema(1:4:end));
-    figure(2)
-    subplot(2,2,3);
-    imshow(origin);
-    hold on
-    plot(ry,rx,'g+');
-    title('accurate keypoints 1');
+    % figure(2)
+    % subplot(2,2,3);
+    % imshow(origin);
+    % hold on
+    % plot(ry,rx,'g+');
+    % title('accurate keypoints 1');
+    
+    % threshold on localization
     for i=1:extr_volume
         x=floor((extrema(4*(i-1)+3)-1)/(n/(2^(extrema(4*(i-1)+1)-2))))+1;
         y=mod((extrema(4*(i-1)+3)-1),m/(2^(extrema(4*(i-1)+1)-2)))+1;
@@ -206,12 +210,25 @@ function [feature,loc]=SIFT(img, f_num)
         Dyy=D{extrema(4*(i-1)+1)}(rx,ry-1,rz)+D{extrema(4*(i-1)+1)}(rx,ry+1,rz)-2*D{extrema(4*(i-1)+1)}(rx,ry,rz);
         Dxy=D{extrema(4*(i-1)+1)}(rx-1,ry-1,rz)+D{extrema(4*(i-1)+1)}(rx+1,ry+1,rz)-D{extrema(4*(i-1)+1)}(rx-1,ry+1,rz)-D{extrema(4*(i-1)+1)}(rx+1,ry-1,rz);
         deter=Dxx*Dyy-Dxy*Dxy;
-        R=(Dxx+Dyy)/deter;
+        
+        % Harris operator
+        iter=4*(i-1)+4;
+        R(i)=(Dxx+Dyy)/deter; 
         R_threshold=(r+1)^2/r;
-        if(deter<0||R>R_threshold)
-            extrema(4*(i-1)+4)=0;
+        if(deter<0||R(i)>R_threshold)
+            extrema(iter)=0;
+            R(i)=-inf;
         end
     end
+    
+    % top f_num features
+    if nargin>1
+        [num,idx]=sort(R);
+        iter=4.*(idx(f_num+1:end)-1)+4;
+        extrema(iter)=0;
+    end
+    
+    % accuration
     idx=find(extrema==0);
     idx=[idx,idx-1,idx-2,idx-3];
     extrema(idx)=[];
@@ -220,12 +237,12 @@ function [feature,loc]=SIFT(img, f_num)
     y=mod((extrema(3:4:end)-1),m./(2.^(extrema(1:4:end)-2)))+1;
     ry=y./2.^(octave-1-extrema(1:4:end));
     rx=x./2.^(octave-1-extrema(1:4:end));
-    figure(2)
-    subplot(2,2,4);
-    imshow(origin);
-    hold on
-    plot(ry,rx,'b+');
-    title('accurate keypoints 2');
+    % figure(2)
+    % subplot(2,2,4);
+    % imshow(origin);
+    % hold on
+    % plot(ry,rx,'b+');
+    % title('accurate keypoints 2');
     
     %% Orientation Assignment
     
@@ -279,9 +296,10 @@ function [feature,loc]=SIFT(img, f_num)
                 mag_counts(x/10+1)=mag_count;
             end
             
-            % find the max histogram bar and the ones higher than 80% max
+            % find the max histogram bar and the ones higher than feature_percentage
             [maxvm,~]=max(mag_counts);
-            kori=find(mag_counts>=(0.8*maxvm));
+            feature_percentage = 0.8;
+            kori=find(mag_counts>=(feature_percentage*maxvm));
             kori=(kori*10+(kori-1)*10)./2-180;
             kpori(f:(f+length(kori)-1))=kori;
             f=f+length(kori);
@@ -373,15 +391,15 @@ function [feature,loc]=SIFT(img, f_num)
                 end
                 descriptor((area-1)*8+1:area*8)=magcounts;
             end
-            descriptor=normr(descriptor);
-            
+            descriptor = descriptor./norm(descriptor);
+                
             % cap 0.2
             for j=1:numel(descriptor)
                 if(abs(descriptor(j))>0.2)
                     descriptor(j)=0.2;        
                 end
             end
-            descriptor=normr(descriptor);
+            descriptor = descriptor./norm(descriptor);
         else
             continue;
         end
@@ -390,5 +408,4 @@ function [feature,loc]=SIFT(img, f_num)
     index=find(sum(feature));
     feature=feature(:,index);
  
->>>>>>> b21f60c8cf73095a47ff11c8f8c9c21b42a45374
 end
