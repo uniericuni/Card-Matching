@@ -18,7 +18,8 @@ segmask1 = segmentation(im1);
 segmask2 = segmentation(im2);
 
 %% Feature Extraction
-[feature1,loc1]=SIFT(im1,100);
+mask=(segmask1==1);
+[feature1,loc1]=SIFT(im1,100,mask);
 [feature2,loc2]=SIFT(im2,100);
 
 

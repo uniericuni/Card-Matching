@@ -33,12 +33,15 @@
 %% SIFT
 % img: input image
 % f_num: expected output feature amount
-% rtn: 
-function [feature,loc]=SIFT(img, f_num)
+% mask: RIO
+% feature: columns of features
+% loc: corresponding coordinate
+function [feature,loc]=SIFT(img, f_num, mask)
 
     %% Initiate image
     fprintf('Initiate image ...\n');
     img=rgb2gray(img);
+    img=img+uint8(~mask).*255;
     img=im2double(img);
     [row,column]=size(img);
     origin=img;
@@ -217,7 +220,7 @@ function [feature,loc]=SIFT(img, f_num)
         R_threshold=(r+1)^2/r;
         if(deter<0||R(i)>R_threshold)
             extrema(iter)=0;
-            R(i)=-inf;
+            R(i)=inf;
         end
     end
     
