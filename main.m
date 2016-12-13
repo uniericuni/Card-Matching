@@ -31,7 +31,7 @@ for i=1:5
         
         % Write File
         out=zeros(height,width);
-        out(uint8(mean(y1)),uint8(mean(x1)))=255;
+        out(floor(mean(y1)),floor(mean(x1)))=255;
         imwrite(out, ['00',num2str(i),'_00',num2str(j),'.png'])
         
     end
